@@ -83,7 +83,10 @@ const config = {
                     from: 'assets',
                     to: 'assets'
                 },
-                'config.json',
+                {
+                    from: path.resolve(__dirname, 'config.json'),
+                    to: 'config.json'
+                },
                 'robots.txt',
                 {
                     from: 'touchicon*.png',
@@ -253,7 +256,8 @@ const config = {
             {
                 test: /\.(js|jsx|mjs)$/,
                 include: [
-                    path.resolve(__dirname, 'node_modules/@tanstack/query-devtools')
+                    path.resolve(__dirname, 'node_modules/@tanstack/query-devtools'),
+                    path.resolve(__dirname, 'node_modules/@mui')
                 ],
                 resolve: {
                     fullySpecified: false

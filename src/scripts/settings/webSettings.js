@@ -49,7 +49,19 @@ export function getMultiServer() {
 
 export function getServers() {
     return getConfig().then(config => {
-        return config.servers || [];
+        const servers = Array.isArray(config.servers) ? config.servers : [];
+
+        return servers.map(server => {
+            if (typeof server === 'string') {
+                return server;
+            }
+
+            if (!server || typeof server !== 'object') {
+                return null;
+            }
+
+            return server.Url || server.url || server.Address || server.address || server.ManualAddress || null;
+        }).filter(server => typeof server === 'string').map(server => server.trim()).filter(server => !!server);
     }).catch(error => {
         console.log('cannot get web config:', error);
         return [];

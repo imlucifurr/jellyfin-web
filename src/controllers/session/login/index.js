@@ -74,7 +74,6 @@ function authenticateQuickConnect(apiClient, targetUrl) {
 
                 clearInterval(interval);
 
-                // Close the QuickConnect dialog
                 const dlg = document.getElementById('quickConnectAlert');
                 if (dlg) {
                     dialogHelper.close(dlg);
@@ -85,7 +84,6 @@ function authenticateQuickConnect(apiClient, targetUrl) {
             }, function (e) {
                 clearInterval(interval);
 
-                // Close the QuickConnect dialog
                 const dlg = document.getElementById('quickConnectAlert');
                 if (dlg) {
                     dialogHelper.close(dlg);
@@ -246,41 +244,52 @@ export default function (view, params) {
         e.preventDefault();
         return false;
     });
-    view.querySelector('.btnForgotPassword').addEventListener('click', function () {
-        Dashboard.navigate('forgotpassword');
-    });
+    const btnForgotPassword = view.querySelector('.btnForgotPassword');
+    if (btnForgotPassword) {
+        btnForgotPassword.addEventListener('click', function () {
+            Dashboard.navigate('forgotpassword');
+        });
+    }
     view.querySelector('.btnCancel').addEventListener('click', showVisualForm);
-    view.querySelector('.btnQuick').addEventListener('click', function () {
-        authenticateQuickConnect(getApiClient(), getTargetUrl());
-        return false;
-    });
+    const btnQuick = view.querySelector('.btnQuick');
+    if (btnQuick) {
+        btnQuick.addEventListener('click', function () {
+            authenticateQuickConnect(getApiClient(), getTargetUrl());
+            return false;
+        });
+    }
     view.querySelector('.btnManual').addEventListener('click', function () {
         view.querySelector('#txtManualName').value = '';
         showManualForm(view, true);
     });
-    view.querySelector('.btnSelectServer').addEventListener('click', function () {
-        Dashboard.selectServer();
-    });
+    const btnSelectServer = view.querySelector('.btnSelectServer');
+    if (btnSelectServer) {
+        btnSelectServer.addEventListener('click', function () {
+            Dashboard.selectServer();
+        });
+    }
 
     view.addEventListener('viewshow', function () {
         loading.show();
         libraryMenu.setTransparentMenu(true);
 
-        if (!appHost.supports(AppFeature.MultiServer)) {
-            view.querySelector('.btnSelectServer').classList.add('hide');
+        if (!appHost.supports(AppFeature.MultiServer) && btnSelectServer) {
+            btnSelectServer.classList.add('hide');
         }
 
         const apiClient = getApiClient();
 
-        apiClient.getQuickConnect('Enabled')
-            .then(enabled => {
-                if (enabled === true) {
-                    view.querySelector('.btnQuick').classList.remove('hide');
-                }
-            })
-            .catch(() => {
-                console.debug('Failed to get QuickConnect status');
-            });
+        if (btnQuick) {
+            apiClient.getQuickConnect('Enabled')
+                .then(enabled => {
+                    if (enabled === true) {
+                        btnQuick.classList.remove('hide');
+                    }
+                })
+                .catch(() => {
+                    console.debug('Failed to get QuickConnect status');
+                });
+        }
 
         apiClient.getPublicUsers().then(function (users) {
             if (users.length) {

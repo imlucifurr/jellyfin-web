@@ -33,6 +33,11 @@ export async function serverAddress() {
     // Use servers specified in config.json
     const urls = await webSettings.getServers();
 
+    if (urls.length > 0) {
+        console.debug('Using configured server URL from config.json:', urls[0]);
+        return Promise.resolve(urls[0]);
+    }
+
     if (urls.length === 0) {
         // Otherwise use computed base URL
         let url;
