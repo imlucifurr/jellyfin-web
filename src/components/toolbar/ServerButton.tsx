@@ -1,37 +1,35 @@
-import icon from '@jellyfin/ux-web/icon-transparent.png';
 import Button from '@mui/material/Button/Button';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useSystemInfo } from 'hooks/useSystemInfo';
+const WEFIX_LOGO_URL = 'https://cdn.weflix.me/images/weflix.svg';
 
 const ServerButton: FC = () => {
-    const {
-        data: systemInfo,
-        isPending
-    } = useSystemInfo();
-
     return (
         <Button
             variant='text'
             size='large'
             color='inherit'
+            aria-label='WeFlix'
+            sx={{
+                minWidth: 'auto',
+                '&:hover': {
+                    backgroundColor: 'transparent'
+                }
+            }}
             startIcon={
                 <img
-                    src={icon}
-                    alt=''
-                    aria-hidden
+                    src={WEFIX_LOGO_URL}
+                    alt='WeFlix'
                     style={{
-                        maxHeight: '1.25em',
-                        maxWidth: '1.25em'
+                        height: '2.0em',
+                        width: 'auto'
                     }}
                 />
             }
             component={Link}
             to='/'
-        >
-            {isPending ? '' : (systemInfo?.ServerName || 'Jellyfin')}
-        </Button>
+        />
     );
 };
 

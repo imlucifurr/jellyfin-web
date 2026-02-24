@@ -63,6 +63,14 @@ export const Component: FC = () => {
                                 ml: {
                                     xs: 0,
                                     md: isDrawerAvailable ? DRAWER_WIDTH : 0
+                                },
+                                '&.MuiAppBar-colorDefault': {
+                                    backgroundColor: '#141414',
+                                    backgroundImage: 'none'
+                                },
+                                '&.MuiPaper-elevation4': {
+                                    backgroundColor: '#141414',
+                                    backgroundImage: 'none'
                                 }
                             }}
                         >

@@ -1,34 +1,87 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
-import Favorite from '@mui/icons-material/Favorite';
 import Button from '@mui/material/Button/Button';
-import Icon from '@mui/material/Icon';
-import { Theme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import React, { useCallback, useMemo, useState } from 'react';
+import SvgIcon from '@mui/material/SvgIcon';
+import React, { useMemo } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
-import LibraryIcon from 'apps/experimental/components/LibraryIcon';
 import { MetaView } from 'apps/experimental/constants/metaView';
 import { isLibraryPath } from 'apps/experimental/features/libraries/utils/path';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
 import useCurrentTab from 'hooks/useCurrentTab';
 import { useUserViews } from 'hooks/useUserViews';
-import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
-
-import UserViewsMenu from './UserViewsMenu';
-
-const MAX_USER_VIEWS_MD = 3;
-const MAX_USER_VIEWS_LG = 5;
-const MAX_USER_VIEWS_XL = 8;
-
-const OVERFLOW_MENU_ID = 'user-view-overflow-menu';
 
 const HOME_PATH = '/home';
 const LIST_PATH = '/list';
+const REQUEST_URL = 'https://request.weflix.me/';
+const REQUEST_ICON_PATH = 'M16 4c.552 0 1 .448 1 1v4.2l5.213-3.65c.226-.158.538-.103.697.124.058.084.09.184.09.286v12.08c0 .276-.224.5-.5.5-.103 0-.203-.032-.287-.09L17 14.8V19c0 .552-.448 1-1 1H2c-.552 0-1-.448-1-1V5c0-.552.448-1 1-1h14zm-1 2H3v12h12V6zm-5 2v4h3l-4 4-4-4h3V8h2zm11 .841l-4 2.8v.718l4 2.8V8.84z';
+const BOLD_TEXT_EFFECT = '0 0 0 currentColor, 0.02em 0 0 currentColor, -0.02em 0 0 currentColor';
+
+const navButtonSx = {
+    textTransform: 'none',
+    borderRadius: 0,
+    minWidth: 'auto',
+    px: 1.25,
+    fontSize: '1.2rem',
+    lineHeight: 1.2,
+    fontWeight: 400,
+    '&:hover': {
+        backgroundColor: 'transparent',
+        fontWeight: 400,
+        textShadow: BOLD_TEXT_EFFECT
+    }
+};
+
+const activeNavButtonSx = {
+    ...navButtonSx,
+    fontWeight: 400,
+    textShadow: BOLD_TEXT_EFFECT,
+    borderBottom: '2px solid currentColor'
+};
+
+const requestButtonSx = {
+    ...navButtonSx,
+    borderRadius: '10px',
+    px: 1.3,
+    py: 1.45,
+    minHeight: 0,
+    alignSelf: 'center',
+    '&:hover': {
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.36) 0%, rgba(255,255,255,0.20) 28%, rgba(255,255,255,0.12) 100%)'
+    }
+};
+
+function getOrderedViews(views: BaseItemDto[] | undefined) {
+    if (!views) return [];
+
+    const getName = (view: BaseItemDto) => (view.Name || '').toLowerCase();
+    const pickedIds = new Set<string>();
+    const ordered: BaseItemDto[] = [];
+
+    const pushMatch = (predicate: (view: BaseItemDto) => boolean) => {
+        const match = views.find(view => {
+            if (!view.Id || pickedIds.has(view.Id)) return false;
+            return predicate(view);
+        });
+
+        if (match?.Id) {
+            ordered.push(match);
+            pickedIds.add(match.Id);
+        }
+    };
+
+    pushMatch(view => view.CollectionType === CollectionType.Movies || getName(view) === 'movies');
+    pushMatch(view => {
+        const name = getName(view);
+        const isAnime = name.includes('anime');
+        return !isAnime && (view.CollectionType === CollectionType.Tvshows || name === 'tv shows' || (name.includes('tv') && name.includes('show')));
+    });
+    pushMatch(view => getName(view).includes('anime'));
+
+    return ordered;
+}
 
 const getCurrentUserView = (
     userViews: BaseItemDto[] | undefined,
@@ -58,19 +111,6 @@ const UserViewNav = () => {
     const libraryId = searchParams.get('topParentId') || searchParams.get('parentId');
     const collectionType = searchParams.get('collectionType');
     const { activeTab } = useCurrentTab();
-    const webConfig = useWebConfig();
-
-    const isExtraLargeScreen = useMediaQuery((t: Theme) => t.breakpoints.up('xl'));
-    const isLargeScreen = useMediaQuery((t: Theme) => t.breakpoints.up('lg'));
-    const maxViews = useMemo(() => {
-        let _maxViews = MAX_USER_VIEWS_MD;
-        if (isExtraLargeScreen) _maxViews = MAX_USER_VIEWS_XL;
-        else if (isLargeScreen) _maxViews = MAX_USER_VIEWS_LG;
-
-        const customLinks = (webConfig.menuLinks || []).length;
-
-        return _maxViews - customLinks;
-    }, [ isExtraLargeScreen, isLargeScreen, webConfig.menuLinks ]);
 
     const { user } = useApi();
     const {
@@ -78,24 +118,9 @@ const UserViewNav = () => {
         isPending
     } = useUserViews(user?.Id);
 
-    const primaryViews = useMemo(() => (
-        userViews?.Items?.slice(0, maxViews)
-    ), [ maxViews, userViews ]);
-
-    const overflowViews = useMemo(() => (
-        userViews?.Items?.slice(maxViews)
-    ), [ maxViews, userViews ]);
-
-    const [ overflowAnchorEl, setOverflowAnchorEl ] = useState<null | HTMLElement>(null);
-    const isOverflowMenuOpen = Boolean(overflowAnchorEl);
-
-    const onOverflowButtonClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
-        setOverflowAnchorEl(event.currentTarget);
-    }, []);
-
-    const onOverflowMenuClose = useCallback(() => {
-        setOverflowAnchorEl(null);
-    }, []);
+    const orderedViews = useMemo(() => (
+        getOrderedViews(userViews?.Items)
+    ), [ userViews?.Items ]);
 
     const currentUserView = useMemo(() => (
         getCurrentUserView(userViews?.Items, location.pathname, libraryId, collectionType, activeTab)
@@ -105,66 +130,59 @@ const UserViewNav = () => {
 
     return (
         <>
-            <Button
-                variant='text'
-                color={(currentUserView?.Id === MetaView.Favorites.Id) ? 'primary' : 'inherit'}
-                startIcon={<Favorite />}
-                component={Link}
-                to='/home?tab=1'
-            >
-                {globalize.translate(MetaView.Favorites.Name)}
-            </Button>
-
-            {webConfig.menuLinks?.map(link => (
-                <Button
-                    key={link.name}
-                    variant='text'
-                    color='inherit'
-                    startIcon={<Icon>{link.icon || 'link'}</Icon>}
-                    component='a'
-                    href={link.url}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    {link.name}
-                </Button>
-            ))}
-
-            {primaryViews?.map(view => (
+            {orderedViews.map(view => (
                 <Button
                     key={view.Id}
                     variant='text'
-                    color={(view.Id === currentUserView?.Id) ? 'primary' : 'inherit'}
-                    startIcon={<LibraryIcon item={view} />}
+                    color='inherit'
+                    sx={(view.Id === currentUserView?.Id) ? activeNavButtonSx : navButtonSx}
                     component={Link}
                     to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
                 >
                     {view.Name}
                 </Button>
             ))}
-            {overflowViews && overflowViews.length > 0 && (
-                <>
-                    <Button
-                        variant='text'
-                        color='inherit'
-                        endIcon={<ArrowDropDown />}
-                        aria-controls={OVERFLOW_MENU_ID}
-                        aria-haspopup='true'
-                        onClick={onOverflowButtonClick}
-                    >
-                        {globalize.translate('ButtonMore')}
-                    </Button>
 
-                    <UserViewsMenu
-                        anchorEl={overflowAnchorEl}
-                        id={OVERFLOW_MENU_ID}
-                        open={isOverflowMenuOpen}
-                        onMenuClose={onOverflowMenuClose}
-                        userViews={overflowViews}
-                        selectedId={currentUserView?.Id}
-                    />
-                </>
-            )}
+            <Button
+                variant='text'
+                color='inherit'
+                sx={(currentUserView?.Id === MetaView.Favorites.Id) ? activeNavButtonSx : navButtonSx}
+                component={Link}
+                to='/home?tab=1'
+            >
+                {globalize.translate(MetaView.Favorites.Name)}
+            </Button>
+
+            <span
+                aria-hidden
+                style={{
+                    alignSelf: 'center',
+                    display: 'inline-flex',
+                    fontSize: '1.5rem',
+                    lineHeight: 1,
+                    opacity: 0.75,
+                    padding: '0 0.45rem'
+                }}
+            >
+                |
+            </span>
+
+            <Button
+                variant='text'
+                color='inherit'
+                sx={requestButtonSx}
+                startIcon={(
+                    <SvgIcon fontSize='small' viewBox='0 0 24 24'>
+                        <path d={REQUEST_ICON_PATH} />
+                    </SvgIcon>
+                )}
+                component='a'
+                href={REQUEST_URL}
+                target='_blank'
+                rel='noopener noreferrer'
+            >
+                Request
+            </Button>
         </>
     );
 };

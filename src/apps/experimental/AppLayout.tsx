@@ -38,7 +38,15 @@ export const Component = () => {
                             position='fixed'
                             sx={{
                                 width: '100%',
-                                ml: 0
+                                ml: 0,
+                                '&.MuiAppBar-colorDefault': {
+                                    backgroundColor: '#141414',
+                                    backgroundImage: 'none'
+                                },
+                                '&.MuiPaper-elevation4': {
+                                    backgroundColor: '#141414',
+                                    backgroundImage: 'none'
+                                }
                             }}
                         >
                             <AppToolbar
