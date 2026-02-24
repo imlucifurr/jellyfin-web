@@ -27,6 +27,10 @@ $mui-bp-xl: 1536px;
     padding-top: 3.25rem !important;
 }
 
+#indexPage.homePage.libraryPage.withTabs {
+    padding-top: 0 !important;
+}
+
 .layout-mobile {
     .itemBackdrop {
         // Fix backdrop position on mobile item details page

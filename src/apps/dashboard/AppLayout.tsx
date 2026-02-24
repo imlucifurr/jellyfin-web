@@ -64,6 +64,12 @@ export const Component: FC = () => {
                                     xs: 0,
                                     md: isDrawerAvailable ? DRAWER_WIDTH : 0
                                 },
+                                '&.MuiAppBar-colorTransparent': {
+                                    backgroundColor: 'transparent',
+                                    backgroundImage: 'none',
+                                    boxShadow: 'none',
+                                    backdropFilter: 'none'
+                                },
                                 '&.MuiAppBar-colorDefault': {
                                     backgroundColor: '#141414',
                                     backgroundImage: 'none'

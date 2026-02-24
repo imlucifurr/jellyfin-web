@@ -39,6 +39,12 @@ export const Component = () => {
                             sx={{
                                 width: '100%',
                                 ml: 0,
+                                '&.MuiAppBar-colorTransparent': {
+                                    backgroundColor: 'transparent',
+                                    backgroundImage: 'none',
+                                    boxShadow: 'none',
+                                    backdropFilter: 'none'
+                                },
                                 '&.MuiAppBar-colorDefault': {
                                     backgroundColor: '#141414',
                                     backgroundImage: 'none'
