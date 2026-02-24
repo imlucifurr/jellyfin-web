@@ -24,6 +24,25 @@ async function getConfig() {
     }
 }
 
+async function getLatestConfig() {
+    try {
+        const response = await fetchLocal('config.json', {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+
+        const latestData = await response.json();
+        data = latestData;
+        return latestData;
+    } catch (error) {
+        console.warn('failed to fetch latest web config file:', error);
+        return getConfig();
+    }
+}
+
 export function getIncludeCorsCredentials() {
     return getConfig()
         .then(config => !!config.includeCorsCredentials)
@@ -127,5 +146,26 @@ export function getPlugins() {
     }).catch(error => {
         console.log('cannot get web config:', error);
         return DefaultConfig.plugins;
+    });
+}
+
+export function getMovieHeroItems() {
+    return getLatestConfig().then(config => {
+        if (Array.isArray(config)) {
+            return config;
+        }
+
+        const lists = [
+            config.movieHeroItems,
+            config.movieHeroList,
+            config.homeHero,
+            config.heroMovies
+        ];
+
+        const heroItems = lists.find(Array.isArray);
+        return heroItems || [];
+    }).catch(error => {
+        console.log('cannot get hero movie list from web config:', error);
+        return [];
     });
 }

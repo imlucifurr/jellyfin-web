@@ -3,9 +3,154 @@
     margin: 0.5em !important;
 }
 
+.movieHeroContainer {
+    position: relative;
+}
+
+.movieHero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg,
+                rgba(var(--jf-palette-background-defaultChannel) / 0.92) 0%,
+                rgba(var(--jf-palette-background-defaultChannel) / 0.75) 38%,
+                rgba(var(--jf-palette-background-defaultChannel) / 0.35) 65%,
+                rgba(var(--jf-palette-background-defaultChannel) / 0.15) 100%);
+        z-index: 1;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 30%;
+        background: linear-gradient(180deg, rgba(var(--jf-palette-background-defaultChannel) / 0) 0%, rgba(var(--jf-palette-background-defaultChannel) / 1) 100%);
+        z-index: 1;
+    }
+}
+
+.movieHeroMedia {
+    position: absolute;
+    inset: 0;
+}
+
+.movieHeroVideo,
+.movieHeroBackgroundImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.movieHeroContent {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-bottom: 8vh;
+}
+
+.movieHeroContentInner {
+    max-width: 40rem;
+}
+
+.movieHeroLogo {
+    display: block;
+    max-width: min(34rem, 70vw);
+    max-height: 25vh;
+    margin-bottom: 1rem;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.movieHeroTitle {
+    margin: 0 0 1rem;
+}
+
+.movieHeroSummary {
+    font-size: 1.25rem;
+    line-height: 1.4;
+    max-width: 36rem;
+    margin: 0;
+}
+
+.movieHeroActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.movieHeroButton {
+    min-width: 8.25rem;
+}
+
+.movieHeroQueue {
+    position: absolute;
+    right: 2.5rem;
+    bottom: 8rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.movieHeroQueueBar {
+    position: relative;
+    width: 3.5rem;
+    height: 0.4rem;
+    overflow: hidden;
+    background-color: #333333;
+    border-radius: 9999px;
+    border: 0;
+    padding: 0;
+    appearance: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.movieHeroQueueBar:hover {
+    background-color: #f4f4f4;
+}
+.movieHeroQueueBar-active {
+    background-color: #f4f4f4;
+}
+
+.movieHeroQueueProgress {
+    display: block;
+    width: 0;
+    height: 100%;
+    background-color: var(--jf-palette-error-main);
+    border-radius: 9999px;
+}
+
 @media all and (max-width: 50em) {
     .homeLibraryButton {
         width: 46% !important;
+    }
+
+    .movieHero {
+        min-height: 70vh;
+    }
+
+    .movieHeroSummary {
+        font-size: 1rem;
+    }
+
+    .movieHeroQueue {
+        right: 1.25rem;
+        bottom: 1.5rem;
+    }
+
+    .movieHeroQueueBar {
+        width: 2.25rem;
     }
 }
 
