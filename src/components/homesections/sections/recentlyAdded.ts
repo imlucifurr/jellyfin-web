@@ -222,6 +222,19 @@ function getWatchedItems(apiClient: ApiClient, userId: string) {
     }).then(result => result.Items ?? []);
 }
 
+function getFavoriteItems(apiClient: ApiClient, userId: string) {
+    return apiClient.getItems(userId, {
+        Recursive: true,
+        IncludeItemTypes: 'Movie,Series',
+        Filters: 'IsFavorite',
+        Limit: 200,
+        Fields: 'Genres,CommunityRating,ProductionYear,UserData',
+        SortBy: 'SortName',
+        SortOrder: 'Ascending',
+        EnableTotalRecordCount: false
+    }).then(result => result.Items ?? []);
+}
+
 function pickItemByCandidate(
     candidates: BaseItemDto[],
     tvdbCandidate: TvdbCandidate,
@@ -425,34 +438,60 @@ function getGenreTasteProfile(items: BaseItemDto[]) {
     return genreWeights;
 }
 
+function rankByTasteProfile(libraryItems: BaseItemDto[], tasteProfile: Map<string, number>) {
+    return libraryItems
+        .filter(item => !item.UserData?.Played)
+        .map(item => {
+            const genreBoost = (item.Genres ?? []).reduce((total, genre) => {
+                return total + (tasteProfile.get(genre.toLowerCase()) ?? 0);
+            }, 0);
+
+            const communityRatingBoost = (item.CommunityRating ?? 0) * 2;
+            const totalScore = genreBoost + communityRatingBoost;
+
+            return {
+                item,
+                totalScore
+            };
+        })
+        .sort((a, b) => b.totalScore - a.totalScore)
+        .map(entry => entry.item);
+}
+
+function getRandomItems(items: BaseItemDto[], limit: number) {
+    const shuffled = items.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+    }
+
+    return shuffled.slice(0, limit);
+}
+
 async function getTopPicksItems(apiClient: ApiClient, userId: string) {
     try {
-        const [libraryItems, watchedItems] = await Promise.all([
+        const [libraryItems, favoriteItems, watchedItems] = await Promise.all([
             getLibraryItems(apiClient, userId),
+            getFavoriteItems(apiClient, userId),
             getWatchedItems(apiClient, userId)
         ]);
 
-        const tasteProfile = getGenreTasteProfile(watchedItems);
-        const candidates = libraryItems
-            .filter(item => !item.UserData?.Played)
-            .map(item => {
-                const genreBoost = (item.Genres ?? []).reduce((total, genre) => {
-                    return total + (tasteProfile.get(genre.toLowerCase()) ?? 0);
-                }, 0);
+        const favoritesProfile = getGenreTasteProfile(favoriteItems);
+        if (favoriteItems.length > 0 && favoritesProfile.size > 0) {
+            return rankByTasteProfile(libraryItems, favoritesProfile).slice(0, 24);
+        }
 
-                const communityRatingBoost = (item.CommunityRating ?? 0) * 2;
-                const totalScore = genreBoost + communityRatingBoost;
+        const watchedProfile = getGenreTasteProfile(watchedItems);
+        if (watchedItems.length > 0 && watchedProfile.size > 0) {
+            return rankByTasteProfile(libraryItems, watchedProfile).slice(0, 24);
+        }
 
-                return {
-                    item,
-                    totalScore
-                };
-            })
-            .sort((a, b) => b.totalScore - a.totalScore)
-            .map(entry => entry.item)
-            .slice(0, 24);
+        const randomPool = libraryItems.filter(item => !item.UserData?.Played);
+        if (randomPool.length > 0) {
+            return getRandomItems(randomPool, 24);
+        }
 
-        return candidates;
+        return getRandomItems(libraryItems, 24);
     } catch (_error) {
         return [];
     }

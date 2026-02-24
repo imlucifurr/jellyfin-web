@@ -149,6 +149,23 @@ export function getPlugins() {
     });
 }
 
+export function getTvdbApiKey() {
+    return getConfig().then(config => {
+        if (typeof config.tvdbApiKey === 'string') {
+            return config.tvdbApiKey.trim();
+        }
+
+        if (config.tvdb && typeof config.tvdb === 'object' && typeof config.tvdb.apiKey === 'string') {
+            return config.tvdb.apiKey.trim();
+        }
+
+        return '';
+    }).catch(error => {
+        console.log('cannot get tvdb api key from web config:', error);
+        return '';
+    });
+}
+
 export function getMovieHeroItems() {
     return getLatestConfig().then(config => {
         if (Array.isArray(config)) {

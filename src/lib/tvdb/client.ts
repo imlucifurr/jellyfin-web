@@ -1,3 +1,5 @@
+import { getTvdbApiKey } from 'scripts/settings/webSettings';
+
 type TvdbRecordType = 'movie' | 'series';
 type TvdbCandidateType = 'new' | 'popular';
 
@@ -40,7 +42,6 @@ interface CandidatesCacheEntry {
 }
 
 const TVDB_BASE_URL = 'https://api4.thetvdb.com/v4';
-const TVDB_API_KEY = 'eab59b34-47e5-4143-9bcf-95dd15a5aaa0';
 const TVDB_DEFAULT_LANG = 'eng';
 const TVDB_DEFAULT_COUNTRY = 'usa';
 const TOKEN_CACHE_MS = 1000 * 60 * 60 * 24 * 25;
@@ -51,6 +52,20 @@ const TVDB_LOGIN_TIMEOUT_MS = 6000;
 let tokenCache: TokenCacheEntry | null = null;
 let tokenPromise: Promise<string> | null = null;
 const candidatesCache = new Map<number, CandidatesCacheEntry>();
+let tvdbApiKeyPromise: Promise<string> | null = null;
+
+async function resolveTvdbApiKey() {
+    if (!tvdbApiKeyPromise) {
+        tvdbApiKeyPromise = getTvdbApiKey();
+    }
+
+    const apiKey = await tvdbApiKeyPromise;
+    if (!apiKey) {
+        throw new Error('TVDB API key is missing in config.json (tvdbApiKey)');
+    }
+
+    return apiKey;
+}
 
 function toQueryString(query?: Record<string, string | number | undefined>) {
     if (!query) {
@@ -116,6 +131,8 @@ async function getTvdbToken() {
         return tokenPromise;
     }
 
+    const apiKey = await resolveTvdbApiKey();
+
     tokenPromise = requestTvdb<TvdbAuthResponse>(
         '/login',
         {
@@ -123,7 +140,7 @@ async function getTvdbToken() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ apikey: TVDB_API_KEY })
+            body: JSON.stringify({ apikey: apiKey })
         },
         undefined,
         undefined,

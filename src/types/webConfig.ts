@@ -18,4 +18,5 @@ export interface WebConfig {
     menuLinks?: MenuLink[]
     servers?: string[]
     plugins?: string[]
+    tvdbApiKey?: string
 }
