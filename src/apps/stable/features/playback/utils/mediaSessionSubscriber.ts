@@ -92,17 +92,24 @@ class MediaSessionSubscriber extends PlaybackSubscriber {
 
     private onMediaSessionUpdate(
         { type: action }: Event,
-        state: PlayerState = this.playbackManager.getPlayerState(this.player)
+        state?: PlayerState
     ) {
-        const item = state.NowPlayingItem;
+        const player = this.player || this.playbackManager.getCurrentPlayer();
+        const resolvedState = state || (player ? this.playbackManager.getPlayerState(player) : undefined);
+
+        if (!resolvedState) {
+            return resetMediaSession();
+        }
+
+        const item = resolvedState.NowPlayingItem;
 
         if (!item) {
-            console.debug('[MediaSessionSubscriber] no now playing item; resetting media session', state);
+            console.debug('[MediaSessionSubscriber] no now playing item; resetting media session', resolvedState);
             return resetMediaSession();
         }
 
         const isVideo = item.MediaType === MediaType.Video;
-        const isLocalPlayer = !!this.player?.isLocalPlayer;
+        const isLocalPlayer = !!player?.isLocalPlayer;
 
         // Local players do their own notifications
         if (isLocalPlayer && isVideo) {
@@ -140,10 +147,10 @@ class MediaSessionSubscriber extends PlaybackSubscriber {
                 artist,
                 album,
                 duration: item.RunTimeTicks ? Math.round(item.RunTimeTicks / TICKS_PER_MILLISECOND) : 0,
-                position: state.PlayState.PositionTicks ? Math.round(state.PlayState.PositionTicks / TICKS_PER_MILLISECOND) : 0,
+                position: resolvedState.PlayState.PositionTicks ? Math.round(resolvedState.PlayState.PositionTicks / TICKS_PER_MILLISECOND) : 0,
                 imageUrl: getImageUrl(item, { maxHeight: 3_000 }),
-                canSeek: !!state.PlayState.CanSeek,
-                isPaused: !!state.PlayState.IsPaused
+                canSeek: !!resolvedState.PlayState.CanSeek,
+                isPaused: !!resolvedState.PlayState.IsPaused
             });
         }
     }
