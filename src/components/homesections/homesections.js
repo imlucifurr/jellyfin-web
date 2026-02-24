@@ -37,19 +37,21 @@ function getAllSectionsToShow(userSettings, sectionCount) {
         sections.push(section);
     }
 
+    const withoutMyMedia = sections.filter(section => (
+        section !== HomeSectionType.SmallLibraryTiles
+        && section !== HomeSectionType.LibraryButtons
+    ));
+
     // Ensure libraries are visible in TV layout
     if (
         layoutManager.tv
-            && !sections.includes(HomeSectionType.SmallLibraryTiles)
-            && !sections.includes(HomeSectionType.LibraryButtons)
+            && !withoutMyMedia.includes(HomeSectionType.SmallLibraryTiles)
+            && !withoutMyMedia.includes(HomeSectionType.LibraryButtons)
     ) {
-        return [
-            HomeSectionType.SmallLibraryTiles,
-            ...sections
-        ];
+        return withoutMyMedia;
     }
 
-    return sections;
+    return withoutMyMedia;
 }
 
 export function loadSections(elem, apiClient, user, userSettings) {

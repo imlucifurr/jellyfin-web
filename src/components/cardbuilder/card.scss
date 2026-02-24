@@ -403,6 +403,28 @@ button::-moz-focus-inner {
     margin: auto; /* 'justify-content: center' doesn't work in Safari 10 */
 }
 
+.cardNewBadge {
+    position: absolute;
+    top: 0px;
+    padding: 0.2em 0.65em;
+    border-radius: 0 0 0.75em 0.75em;
+    background: var(--jf-palette-error-main);
+    color: #fff;
+    font-size: 80%;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    z-index: 1;
+
+    [dir="ltr"] & {
+        left: 0.45em;
+    }
+
+    [dir="rtl"] & {
+        right: 0.45em;
+    }
+}
+
 .cardIndicators {
     top: 0.225em;
     position: absolute;

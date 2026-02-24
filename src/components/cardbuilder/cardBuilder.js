@@ -1044,6 +1044,10 @@ function buildCard(index, item, apiClient, options) {
     cardBoxClose = '</div>';
     cardScalableClose = '</div>';
 
+    if (item.IsRecentNewBadge) {
+        cardImageContainerOpen += `<div class="cardNewBadge">${globalize.translate('New')}</div>`;
+    }
+
     if (options.disableIndicators !== true) {
         let indicatorsHtml = '';
 
