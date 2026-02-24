@@ -41,9 +41,8 @@ export const Component = () => {
                                 ml: 0,
                                 '&.MuiAppBar-colorTransparent': {
                                     backgroundColor: 'transparent',
-                                    backgroundImage: 'none',
-                                    boxShadow: 'none',
-                                    backdropFilter: 'none'
+                                    backgroundImage: 'linear-gradient(180deg, rgba(20, 20, 20, 0.82) 0%, rgba(20, 20, 20, 0.48) 56%, rgba(20, 20, 20, 0) 100%)',
+                                    boxShadow: 'none'
                                 },
                                 '&.MuiAppBar-colorDefault': {
                                     backgroundColor: '#141414',
