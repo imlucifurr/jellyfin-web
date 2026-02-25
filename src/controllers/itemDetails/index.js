@@ -2021,7 +2021,7 @@ function renderCast(page, item, people) {
             itemsContainer: castContent,
             coverImage: true,
             serverId: item.ServerId,
-            shape: 'overflowPortrait',
+            shape: 'overflowSquare',
             imageBlurhashes: item.ImageBlurHashes
         });
     });
@@ -2041,7 +2041,7 @@ function renderGuestCast(page, item, people) {
             itemsContainer: guestCastContent,
             coverImage: true,
             serverId: item.ServerId,
-            shape: 'overflowPortrait',
+            shape: 'overflowSquare',
             imageBlurhashes: item.ImageBlurHashes
         });
     });
@@ -2071,8 +2071,17 @@ function onTrackSelectionsSubmit(e) {
 window.ItemDetailPage = new ItemDetailPage();
 
 export default function (view, params) {
+    function getValidServerId(serverId) {
+        if (!serverId || serverId === 'undefined' || serverId === 'null') {
+            return null;
+        }
+
+        return serverId;
+    }
+
     function getApiClient() {
-        return params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
+        const serverId = getValidServerId(params.serverId);
+        return (serverId && ServerConnections.getApiClient(serverId)) || ServerConnections.currentApiClient() || ApiClient;
     }
 
     function reload(instance, page, pageParams) {
@@ -2085,6 +2094,7 @@ export default function (view, params) {
             reloadFromItem(instance, page, pageParams, item, user);
         }).catch((error) => {
             console.error('failed to get item or current user: ', error);
+            loading.hide();
         });
     }
 

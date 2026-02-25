@@ -317,12 +317,12 @@ a[data-role=button] {
     color: #f8f8fe !important;
 }
 
-.detailRibbon {
+.detailRibbon .HeroBottomRow {
     background: #000420;
     background: linear-gradient(to right, #000420 0%, #06256f 18%, #2b052b 38%, #2b052b 68%, #06256f 81%, #000420 100%);
 }
 
-.layout-tv .detailRibbon {
+.layout-tv .detailRibbon .HeroBottomRow {
     background: none;
 }
 

@@ -1,4 +1,5 @@
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
+import { PersonKind } from '@jellyfin/sdk/lib/generated-client/models/person-kind';
 
 import { setBackdropTransparency } from '../backdrop/backdrop';
 import globalize from '../../lib/globalize';
@@ -30,6 +31,23 @@ export const PUBLIC_PATHS = [
     '/wizardstart',
     '/wizarduser'
 ];
+
+function normalizeServerId(serverId) {
+    if (!serverId || serverId === 'undefined' || serverId === 'null') {
+        return undefined;
+    }
+
+    return serverId;
+}
+
+function getServerId(serverId) {
+    const normalizedServerId = normalizeServerId(serverId);
+    if (normalizedServerId) {
+        return normalizedServerId;
+    }
+
+    return ServerConnections.currentApiClient()?.serverId();
+}
 
 class AppRouter {
     forcedLogoutMsg;
@@ -136,7 +154,8 @@ class AppRouter {
     showItem(item, serverId, options) {
         // TODO: Refactor this so it only gets items, not strings.
         if (typeof item === 'string') {
-            const apiClient = serverId ? ServerConnections.getApiClient(serverId) : ServerConnections.currentApiClient();
+            const normalizedServerId = getServerId(serverId);
+            const apiClient = normalizedServerId ? ServerConnections.getApiClient(normalizedServerId) : ServerConnections.currentApiClient();
             const api = toApi(apiClient);
             const userId = apiClient.getCurrentUserId();
 
@@ -245,7 +264,7 @@ class AppRouter {
         let url;
         // TODO: options will never be false. Replace condition with lodash's isEmpty()
         const itemType = item.Type || (options ? options.itemType : null);
-        const serverId = item.ServerId || options.serverId;
+        const serverId = getServerId(item.ServerId || options.serverId);
 
         if (item === 'settings') {
             return '#/mypreferencesmenu';
@@ -440,7 +459,11 @@ class AppRouter {
             }
         }
 
-        const itemTypes = ['Playlist', 'TvChannel', 'Program', 'BoxSet', 'MusicAlbum', 'MusicGenre', 'Person', 'Recording', 'MusicArtist'];
+        if (itemType === 'Person' || Object.values(PersonKind).includes(itemType)) {
+            return '#/artist?id=' + id + '&serverId=' + serverId;
+        }
+
+        const itemTypes = ['Playlist', 'TvChannel', 'Program', 'BoxSet', 'MusicAlbum', 'MusicGenre', 'Recording', 'MusicArtist'];
 
         if (itemTypes.indexOf(itemType) >= 0) {
             return '#/details?id=' + id + '&serverId=' + serverId;

@@ -10,11 +10,12 @@ const ElevationScroll = ({ children, elevate = false }: { children: ReactElement
         threshold: 0
     });
 
-    const isElevated = elevate || trigger;
+    const hasScrolled = trigger;
+    const shouldElevate = elevate && hasScrolled;
 
     return React.cloneElement(children, {
-        color: isElevated ? 'default' : 'transparent',
-        elevation: isElevated ? 4 : 0
+        color: hasScrolled ? 'default' : 'transparent',
+        elevation: shouldElevate ? 4 : 0
     });
 };
 

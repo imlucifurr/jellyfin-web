@@ -1,0 +1,252 @@
+<div id="itemDetailPage" data-role="page" class="page libraryPage itemDetailPage personDetailPage noSecondaryNavPage selfBackdropPage" data-backbutton="true">
+    <div id="itemBackdrop" class="itemBackdrop"></div>
+
+    <div class="detailLogo"></div>
+
+    <div class="detailPageWrapperContainer">
+        <div class="detailPagePrimaryContainer">
+            <div class="detailRibbon">
+                <div class="HeroBottomRow">
+                    <div class="detailImageContainer hide-desktop hide-tv">
+                    </div>
+
+                    <div class="HeroBottomRow-actions">
+                        <div class="mainDetailButtons focuscontainer-x">
+                            <div class="heroActionIconRow">
+                                <button is="emby-button" type="button" class="button-flat btnPlayTrailer hide detailButton" title="${ButtonTrailer}">
+                                    <div class="detailButton-content">
+                                        <svg class="detailButton-icon detailButton-icon-svg" viewBox="0 0 24 24" height="24" width="24" role="img" aria-hidden="true">
+                                            <path d="M4.503 3.042 C 3.487 3.214,2.556 3.976,2.202 4.925 C 1.994 5.481,2.001 5.233,2.001 11.992 C 2.000 18.878,1.989 18.550,2.234 19.151 C 2.521 19.857,3.143 20.479,3.849 20.766 C 4.453 21.012,4.024 21.000,12.000 21.000 C 19.974 21.000,19.547 21.012,20.150 20.767 C 20.850 20.482,21.482 19.850,21.767 19.150 C 22.011 18.551,22.000 18.876,22.000 12.000 C 22.000 5.123,22.011 5.449,21.766 4.849 C 21.499 4.193,20.964 3.633,20.296 3.312 C 19.636 2.994,20.412 3.023,12.120 3.015 C 8.039 3.012,4.611 3.024,4.503 3.042 M19.340 5.066 C 19.455 5.105,19.603 5.201,19.701 5.299 C 20.023 5.621,20.000 5.097,20.000 12.000 C 20.000 18.903,20.023 18.379,19.701 18.701 C 19.377 19.025,20.023 19.000,12.000 19.000 C 3.977 19.000,4.623 19.025,4.299 18.701 C 3.977 18.379,4.000 18.903,4.000 12.000 C 4.000 5.096,3.976 5.621,4.300 5.298 C 4.616 4.982,3.975 5.007,11.983 5.003 C 18.550 5.000,19.162 5.006,19.340 5.066 M5.660 6.652 C 5.495 6.817,5.467 6.980,5.486 7.649 C 5.501 8.185,5.537 8.291,5.749 8.429 C 5.840 8.489,5.953 8.500,6.500 8.500 C 7.047 8.500,7.160 8.489,7.251 8.429 C 7.463 8.291,7.499 8.185,7.514 7.649 C 7.533 6.980,7.505 6.817,7.340 6.652 L 7.208 6.520 6.500 6.520 L 5.792 6.520 5.660 6.652 M16.660 6.652 C 16.495 6.817,16.467 6.980,16.486 7.649 C 16.501 8.185,16.537 8.291,16.749 8.429 C 16.840 8.489,16.953 8.500,17.500 8.500 C 18.047 8.500,18.160 8.489,18.251 8.429 C 18.463 8.291,18.499 8.185,18.514 7.649 C 18.533 6.980,18.505 6.817,18.340 6.652 L 18.208 6.520 17.500 6.520 L 16.792 6.520 16.660 6.652 M10.208 9.081 C 9.955 9.235,9.960 9.175,9.960 12.000 C 9.960 14.825,9.955 14.763,10.208 14.921 C 10.473 15.088,10.486 15.081,12.720 13.687 C 14.134 12.806,14.808 12.363,14.870 12.276 C 14.974 12.128,14.986 11.927,14.901 11.761 C 14.856 11.675,14.332 11.328,12.831 10.389 C 11.725 9.698,10.762 9.103,10.692 9.066 C 10.522 8.978,10.369 8.983,10.208 9.081 M5.768 11.067 C 5.534 11.182,5.500 11.301,5.500 12.000 C 5.500 12.952,5.548 13.000,6.500 13.000 C 7.452 13.000,7.500 12.952,7.500 12.000 C 7.500 11.047,7.452 10.999,6.494 11.001 C 6.028 11.002,5.872 11.016,5.768 11.067 M16.768 11.067 C 16.534 11.182,16.500 11.301,16.500 12.000 C 16.500 12.952,16.548 13.000,17.500 13.000 C 18.452 13.000,18.500 12.952,18.500 12.000 C 18.500 11.047,18.452 10.999,17.494 11.001 C 17.028 11.002,16.872 11.016,16.768 11.067 M5.660 15.652 C 5.495 15.817,5.467 15.980,5.486 16.649 C 5.501 17.185,5.537 17.291,5.749 17.429 C 5.840 17.489,5.953 17.500,6.500 17.500 C 7.047 17.500,7.160 17.489,7.251 17.429 C 7.463 17.291,7.499 17.185,7.514 16.649 C 7.533 15.980,7.505 15.817,7.340 15.652 L 7.208 15.520 6.500 15.520 L 5.792 15.520 5.660 15.652 M16.660 15.652 C 16.495 15.817,16.467 15.980,16.486 16.649 C 16.501 17.185,16.537 17.291,16.749 17.429 C 16.840 17.489,16.953 17.500,17.500 17.500 C 18.047 17.500,18.160 17.489,18.251 17.429 C 18.463 17.291,18.499 17.185,18.514 16.649 C 18.533 15.980,18.505 15.817,18.340 15.652 L 18.208 15.520 17.500 15.520 L 16.792 15.520 16.660 15.652" fill="currentColor" fill-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <button is="emby-playstatebutton" type="button" class="button-flat btnPlaystate hide detailButton" title="">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon check" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-ratingbutton" type="button" class="button-flat btnUserRating hide detailButton" title="${Rate}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon favorite" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnAudioTracks hide detailButton" title="${ButtonAudioTracks}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon audiotrack" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnSubtitles hide detailButton" title="${Subtitles}">
+                                    <div class="detailButton-content">
+                                        <svg class="detailButton-icon detailButton-icon-svg" viewBox="0 0 16 16" width="16" height="16" data-icon="SubtitlesSmall" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" role="img">
+                                            <path fill="currentColor" fill-rule="evenodd" d="M0 1.75C0 1.34.34 1 .75 1h14.5c.41 0 .75.34.75.75v10.5c0 .41-.34.75-.75.75h-2.5v2a.75.75 0 0 1-1.11.66L6.8 13H.75a.75.75 0 0 1-.75-.75zm1.5.75v9h5.7l.16.1 3.89 2.13V11.5h3.25v-9zm4.5 4H3V5h3zm7 1h-3V9h3zM3 9V7.5h6V9zm10-4H7v1.5h6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnMoreCommands hide detailButton" title="${ButtonMore}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon more_vert" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <div class="heroActionPrimaryRow">
+                                <button is="emby-button" type="button" class="button-flat btnPlay hide detailButton" title="${ButtonResume}" data-action="resume">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon play_arrow" aria-hidden="true"></span>
+                                        <span class="detailButton-text-primary">${ButtonResume}</span>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <div class="heroActionSecondaryRow">
+                                <button is="emby-button" type="button" class="button-flat btnReplay hide detailButton" title="${Play}" data-action="play">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon replay" aria-hidden="true"></span>
+                                        <span class="detailButton-text-primary">${Play}</span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnDownload hide detailButton" title="${Download}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon get_app" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnInstantMix hide detailButton" title="${HeaderInstantMix}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon explore" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnShuffle hide detailButton" title="${Shuffle}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon shuffle" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnCancelSeriesTimer hide detailButton" title="${CancelSeries}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon delete" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnCancelTimer hide detailButton" title="${StopRecording}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon stop" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+
+                                <button is="emby-button" type="button" class="button-flat btnSplitVersions hide detailButton" title="${ButtonSplit}">
+                                    <div class="detailButton-content">
+                                        <span class="material-icons detailButton-icon call_split" aria-hidden="true"></span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="HeroBottomRow-summary">
+                        <div class="infoWrapper">
+                            <div class="nameContainer"></div>
+                            <div class="itemMiscInfo itemMiscInfo-primary" style="margin-bottom: 0.6em;"></div>
+                            <div class="itemMiscInfo itemMiscInfo-secondary" style="margin-bottom: 0.6em;"></div>
+                            <div class="heroBottomSummaryContent">
+                                <h3 class="tagline"></h3>
+                                <p class="overview"></p>
+                                <div class="overview-controls">
+                                    <a class="overview-expand hide" is="emby-linkbutton" href="#">${ShowMore}</a>
+                                </div>
+                            </div>
+
+                            <div class="detailSectionContent">
+                                <p class="itemGenres"></p>
+                                <p id="itemBirthday"></p>
+                                <p id="itemBirthLocation"></p>
+                                <p id="itemDeathDate"></p>
+                                <p id="seriesAirTime"></p>
+
+                                <div class="itemTags focuscontainer-x hide" style="margin: 0.7em 0; font-size: 92%;"></div>
+                                <div class="itemExternalLinks focuscontainer-x hide" style="margin: 0.7em 0; font-size: 92%;"></div>
+                                <div class="seriesRecordingEditor"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="HeroBottomRow-meta">
+                        <div class="itemDetailsGroup">
+                            <div class="detailsGroupItem genresGroup hide">
+                                <div class="genresLabel label"></div>
+                                <div class="genres content focuscontainer-x"></div>
+                            </div>
+
+                            <div class="detailsGroupItem directorsGroup hide">
+                                <div class="directorsLabel label"></div>
+                                <div class="directors content focuscontainer-x"></div>
+                            </div>
+
+                            <div class="detailsGroupItem writersGroup hide">
+                                <div class="writersLabel label"></div>
+                                <div class="writers content focuscontainer-x"></div>
+                            </div>
+
+                            <div class="detailsGroupItem studiosGroup hide">
+                                <div class="studiosLabel label"></div>
+                                <div class="studios content focuscontainer-x"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="detailPageSecondaryContainer padded-left padded-bottom-page">
+            <div id="childrenCollapsible" class="hide verticalSection detailVerticalSection">
+                <h2 class="sectionTitle sectionTitle-cards hide">
+                    <span></span>
+                </h2>
+                <div id="childrenContent">
+                    <div is="emby-itemscontainer" class="itemsContainer padded-right" style="text-align: left;"></div>
+                </div>
+            </div>
+
+            <div id="additionalPartsCollapsible" class="verticalSection detailVerticalSection hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right">${HeaderAdditionalParts}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div id="additionalPartsContent" is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div class="verticalSection detailVerticalSection moreFromSeasonSection hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right"></h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="lyricsSection" class="verticalSection-extrabottompadding detailVerticalSection lyricsContainer hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right">${Lyrics}</h2>
+                <div is="emby-itemscontainer" class="vertical-list lyricsLineContainer" dir="auto"></div>
+            </div>
+
+            <div class="verticalSection detailVerticalSection moreFromArtistSection hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right"></h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="castCollapsible" class="verticalSection detailVerticalSection hide">
+                <h2 id="peopleHeader" class="sectionTitle sectionTitle-cards padded-right">${HeaderCastAndCrew}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div id="castContent" is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="guestCastCollapsible" class="verticalSection detailVerticalSection hide">
+                <h2 id="guestCastHeader" class="sectionTitle sectionTitle-cards padded-right">${HeaderGuestCast}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div id="guestCastContent" is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="seriesScheduleSection" class="verticalSection detailVerticalSection hide">
+                <h2 class="sectionTitle padded-right">${HeaderUpcomingOnTV}</h2>
+                <div id="seriesScheduleList" is="emby-itemscontainer" class="itemsContainer vertical-list padded-right"></div>
+            </div>
+
+            <div id="specialsCollapsible" class="verticalSection detailVerticalSection hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right">${SpecialFeatures}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div id="specialsContent" is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="musicVideosCollapsible" class="verticalSection detailVerticalSection hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right">${MusicVideos}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div id="musicVideosContent" is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="scenesCollapsible" class="verticalSection detailVerticalSection verticalSection-extrabottompadding hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right">${HeaderScenes}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div id="scenesContent" is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer"></div>
+                </div>
+            </div>
+
+            <div id="similarCollapsible" class="verticalSection detailVerticalSection verticalSection-extrabottompadding hide">
+                <h2 class="sectionTitle sectionTitle-cards padded-right">${HeaderMoreLikeThis}</h2>
+                <div is="emby-scroller" class="padded-top-focusscale padded-bottom-focusscale no-padding" data-centerfocus="true">
+                    <div is="emby-itemscontainer" class="scrollSlider focuscontainer-x itemsContainer similarContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

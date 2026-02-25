@@ -8,6 +8,12 @@ export const LEGACY_USER_ROUTES: LegacyRoute[] = [
             view: 'itemDetails/index.html'
         }
     }, {
+        path: 'artist',
+        pageProps: {
+            controller: 'personDetails/index',
+            view: 'personDetails/index.html'
+        }
+    }, {
         path: 'list',
         pageProps: {
             controller: 'list',

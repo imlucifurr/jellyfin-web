@@ -78,7 +78,13 @@ const excludeTypes = [
 ];
 
 async function loadThemeMedia(serverId, itemId) {
-    const apiClient = ServerConnections.getApiClient(serverId);
+    const validServerId = serverId && serverId !== 'undefined' && serverId !== 'null' ? serverId : null;
+    const apiClient = (validServerId && ServerConnections.getApiClient(validServerId)) || ServerConnections.currentApiClient();
+
+    if (!apiClient) {
+        return;
+    }
+
     const api = toApi(apiClient);
     const userId = apiClient.getCurrentUserId();
 

@@ -1,0 +1,138 @@
+
+.personDetailPage {
+    .heroBottomSummaryContent {
+    font-size: 12px;
+}
+	.detailLogo {
+		display: none !important;
+	}
+
+	.itemBackdrop {
+		display: none;
+	}
+
+	.detailPageWrapperContainer {
+		min-height: auto;
+	}
+
+	.detailPagePrimaryContainer {
+		padding-top: 15rem;
+	}
+
+	.detailRibbon {
+		min-height: auto;
+		background-image: none !important;
+	}
+
+	.HeroBottomRow {
+		position: relative;
+		display: grid;
+		grid-template-columns: 20rem minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		grid-template-areas:
+			"portrait summary"
+			"actions summary";
+		column-gap: 2rem;
+		row-gap: 0.35rem;
+		padding: 0 2.75% 0;
+	}
+
+	> .detailPageWrapperContainer > .detailPagePrimaryContainer .HeroBottomRow > .detailImageContainer {
+		grid-area: portrait;
+		width: 20rem;
+		max-width: 100%;
+		display: block !important;
+		align-self: start;
+	}
+
+	> .detailPageWrapperContainer > .detailPagePrimaryContainer .HeroBottomRow > .detailImageContainer .card {
+		position: relative;
+		left: auto;
+		top: auto;
+		float: none;
+		width: 100%;
+		max-width: 100%;
+		margin: 0;
+	}
+
+	.HeroBottomRow-actions {
+		grid-area: actions;
+		width: 20rem;
+		max-width: 100%;
+		margin-top: 0.1rem;
+	}
+
+	.HeroBottomRow-actions .mainDetailButtons {
+		width: 100%;
+		margin: 0;
+	}
+
+	.HeroBottomRow-actions .heroActionIconRow {
+		margin-top: 0.1rem;
+	}
+
+	.HeroBottomRow-actions .heroActionPrimaryRow,
+	.HeroBottomRow-actions .heroActionSecondaryRow {
+		display: none !important;
+	}
+
+	.HeroBottomRow-summary {
+		grid-area: summary;
+		max-width: 80rem;
+	}
+
+	.HeroBottomRow-summary .infoWrapper {
+		margin-top: 0;
+	}
+
+	.HeroBottomRow-meta {
+		display: none;
+	}
+
+	.detailPageSecondaryContainer {
+		padding-top: 1.75rem;
+	}
+
+	@media all and (max-width: 70em) {
+		.HeroBottomRow {
+			grid-template-columns: 11.5rem minmax(0, 1fr);
+			column-gap: 1.2rem;
+			row-gap: 0.3rem;
+		}
+
+		> .detailPageWrapperContainer > .detailPagePrimaryContainer .HeroBottomRow > .detailImageContainer,
+		.HeroBottomRow-actions {
+			width: 11.5rem;
+		}
+
+		.HeroBottomRow-actions {
+			width: 100%;
+		}
+	}
+
+	@media all and (max-width: 46em) {
+		.HeroBottomRow {
+			grid-template-columns: 1fr;
+			grid-template-rows: auto auto auto;
+			grid-template-areas:
+				"portrait"
+				"actions"
+				"summary";
+			row-gap: 0.5rem;
+			padding: 0 5% 0;
+		}
+
+		> .detailPageWrapperContainer > .detailPagePrimaryContainer .HeroBottomRow > .detailImageContainer,
+		.HeroBottomRow-actions {
+			width: min(16rem, 70vw);
+		}
+
+		.HeroBottomRow-actions {
+			width: 100%;
+		}
+
+		.HeroBottomRow-summary {
+			max-width: none;
+		}
+	}
+}

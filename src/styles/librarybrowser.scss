@@ -784,7 +784,6 @@
 
     .layout-desktop & {
         min-height: 25vh;
-        background-image: linear-gradient(180deg, transparent 0%, rgba(16,16,16,0.6) 60%, #101010 100%) !important;
         
     }
 
@@ -801,7 +800,7 @@
 .detailPagePrimaryContainer {
     background: none !important;
 }
-.HeroBottomRow {
+.detailRibbon .HeroBottomRow {
     position: absolute;
     left: 0;
     right: 0;
@@ -814,6 +813,8 @@
     grid-template-areas: "actions summary meta";
     justify-content: left;
     padding: 0 1.5rem 1.5rem 3.3%;
+    background: linear-gradient(180deg, transparent, hsla(0, 0%, 6%, 0.6) 25%, #101010) !important;
+
 }
 
 .HeroBottomRow-actions {
@@ -1385,6 +1386,43 @@ div.itemDetailGalleryLink.defaultCardBackground {
 
 .detailVerticalSection .emby-scrollbuttons {
     padding-top: 0.4em;
+}
+
+#castContent .personCard .cardPadder-overflowSquare,
+#guestCastContent .personCard .cardPadder-overflowSquare {
+    padding-bottom: 100% !important;
+}
+
+#castContent .personCard .cardPadder,
+#guestCastContent .personCard .cardPadder {
+    border-radius: 0.4em !important;
+    overflow: hidden !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+#castContent .personCard.show-focus:not(.show-animation) .cardBox.visualCardBox,
+#guestCastContent .personCard.show-focus:not(.show-animation) .cardBox.visualCardBox,
+#castContent .personCard.show-focus:not(.show-animation) .cardBox:not(.visualCardBox) .cardScalable,
+#guestCastContent .personCard.show-focus:not(.show-animation) .cardBox:not(.visualCardBox) .cardScalable {
+    border-radius: 0.7em !important;
+}
+
+#castContent .personCard .cardImageContainer,
+#guestCastContent .personCard .cardImageContainer,
+#castContent .personCard .cardContent,
+#guestCastContent .personCard .cardContent,
+#castContent .personCard .cardImage,
+#guestCastContent .personCard .cardImage,
+#castContent .personCard .blurhash-canvas,
+#guestCastContent .personCard .blurhash-canvas {
+    border-radius: 0.4em !important;
+    overflow: hidden !important;
+}
+
+#castContent > .personCard.overflowSquareCard,
+#guestCastContent > .personCard.overflowSquareCard {
+    width: clamp(7.5rem, 14vw, 10.75rem);
 }
 
 .layout-tv .detailVerticalSection {

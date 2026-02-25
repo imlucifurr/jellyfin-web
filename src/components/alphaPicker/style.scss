@@ -110,6 +110,10 @@
 }
 
 .alphaPicker-fixed-right {
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+
     [dir="ltr"] & {
         @include conditional-max(right, 0.4em, env(safe-area-inset-right));
     }

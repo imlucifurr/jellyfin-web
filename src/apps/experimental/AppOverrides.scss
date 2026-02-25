@@ -18,17 +18,18 @@ $mui-bp-xl: 1536px;
     }
 }
 
-// Fix the padding of some pages
-.homePage.libraryPage.withTabs, // Home page
-// Library pages excluding the item details page and tabbed pages
-.libraryPage:not(
-    .itemDetailPage
-) {
-    padding-top: 3.25rem !important;
-}
-
+// Home page only
 #indexPage.homePage.libraryPage.withTabs {
     padding-top: 0 !important;
+}
+
+#indexPage.homePage.libraryPage.withTabs .pageTabContent:not(#homeTab) {
+    padding-top: 8rem !important;
+}
+
+// Other library pages (excluding item details)
+.libraryPage:not(.itemDetailPage):not(.homePage) {
+    padding-top: 8rem !important;
 }
 
 .layout-mobile {

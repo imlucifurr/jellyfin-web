@@ -53,12 +53,18 @@
 
 /* Detail ribbon on item details pages */
 .detailRibbon {
-    background-color: #303030;
     color: #ccc;
     color: rgba(255, 255, 255, 0.87);
 
+    .HeroBottomRow {
+        background-color: #303030;
+    }
+
     .layout-tv & {
-        background: none;
+        .HeroBottomRow {
+            background: none;
+        }
+
         color: inherit;
     }
 }

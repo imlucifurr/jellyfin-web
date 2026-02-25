@@ -90,7 +90,8 @@ html {
 }
 
 .backgroundContainer.withBackdrop {
-    opacity: 0.86;
+    opacity: 1;
+    background-color: transparent !important;
 }
 
 @media (hover: hover) and (pointer: fine) {
