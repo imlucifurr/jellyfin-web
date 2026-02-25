@@ -133,8 +133,9 @@ function getProgramScheduleHtml(items, action = 'none') {
 }
 
 function getSelectedMediaSource(page, mediaSources) {
-    const mediaSourceId = page.querySelector('.selectSource').value;
-    return mediaSources.filter(m => m.Id === mediaSourceId)[0];
+    const selectSource = page.querySelector('.selectSource');
+    const mediaSourceId = selectSource?.value;
+    return mediaSources.filter(m => m.Id === mediaSourceId)[0] || mediaSources[0];
 }
 
 function renderSeriesTimerSchedule(page, apiClient, seriesTimerId) {
@@ -153,6 +154,9 @@ function renderSeriesTimerSchedule(page, apiClient, seriesTimerId) {
 
         const html = getProgramScheduleHtml(result.Items);
         const scheduleTab = page.querySelector('#seriesTimerSchedule');
+        if (!scheduleTab) {
+            return;
+        }
         scheduleTab.innerHTML = html;
         imageLoader.lazyChildren(scheduleTab);
     });
@@ -180,30 +184,63 @@ function renderSeriesTimerEditor(page, item, apiClient, user) {
             });
         });
 
-        page.querySelector('#seriesTimerScheduleSection').classList.remove('hide');
+        const seriesTimerScheduleSection = page.querySelector('#seriesTimerScheduleSection');
+        if (seriesTimerScheduleSection) {
+            seriesTimerScheduleSection.classList.remove('hide');
+        }
         hideAll(page, 'btnCancelSeriesTimer', true);
         renderSeriesTimerSchedule(page, apiClient, item.Id);
         return;
     }
 
-    page.querySelector('#seriesTimerScheduleSection').classList.add('hide');
+    const seriesTimerScheduleSection = page.querySelector('#seriesTimerScheduleSection');
+    if (seriesTimerScheduleSection) {
+        seriesTimerScheduleSection.classList.add('hide');
+    }
     hideAll(page, 'btnCancelSeriesTimer');
 }
 
 function renderTrackSelections(page, instance, item, forceReload) {
     const select = page.querySelector('.selectSource');
+    const hasTrackSelectors = !!select;
 
     if (!item.MediaSources || !itemHelper.supportsMediaSourceSelection(item) || playbackManager.getSupportedCommands().indexOf('PlayMediaSource') === -1 || !playbackManager.canPlay(item)) {
-        page.querySelector('.trackSelections').classList.add('hide');
-        select.innerHTML = '';
-        page.querySelector('.selectVideo').innerHTML = '';
-        page.querySelector('.selectAudio').innerHTML = '';
-        page.querySelector('.selectSubtitles').innerHTML = '';
+        const trackSelections = page.querySelector('.trackSelections');
+        if (trackSelections) {
+            trackSelections.classList.add('hide');
+        }
+        hideAll(page, 'btnAudioTracks');
+        hideAll(page, 'btnSubtitles');
+        if (select) {
+            select.innerHTML = '';
+        }
+        const selectVideo = page.querySelector('.selectVideo');
+        if (selectVideo) {
+            selectVideo.innerHTML = '';
+        }
+        const selectAudio = page.querySelector('.selectAudio');
+        if (selectAudio) {
+            selectAudio.innerHTML = '';
+        }
+        const selectSubtitles = page.querySelector('.selectSubtitles');
+        if (selectSubtitles) {
+            selectSubtitles.innerHTML = '';
+        }
         return;
     }
 
     const mediaSources = item.MediaSources;
     instance._currentPlaybackMediaSources = mediaSources;
+    instance._selectedMediaSourceId = mediaSources[0].Id;
+
+    if (!hasTrackSelectors) {
+        const selectedMediaSource = mediaSources[0];
+        instance._selectedAudioStreamIndex = selectedMediaSource.DefaultAudioStreamIndex ?? null;
+        instance._selectedSubtitleStreamIndex = selectedMediaSource.DefaultSubtitleStreamIndex ?? -1;
+        renderAudioSelections(page, mediaSources);
+        renderSubtitleSelections(page, mediaSources);
+        return;
+    }
 
     page.querySelector('.trackSelections').classList.remove('hide');
     select.setLabel(globalize.translate('LabelVersion'));
@@ -237,6 +274,9 @@ function renderVideoSelections(page, mediaSources) {
     });
 
     const select = page.querySelector('.selectVideo');
+    if (!select) {
+        return;
+    }
     select.setLabel(globalize.translate('Video'));
     const selectedId = tracks.length ? tracks[0].Index : -1;
     select.innerHTML = tracks.map(function (v) {
@@ -271,6 +311,10 @@ function renderAudioSelections(page, mediaSources) {
     });
     tracks.sort(itemHelper.sortTracks);
     const select = page.querySelector('.selectAudio');
+    if (!select) {
+        hideAll(page, 'btnAudioTracks', tracks.length > 1);
+        return;
+    }
     select.setLabel(globalize.translate('Audio'));
     const selectedId = mediaSource.DefaultAudioStreamIndex;
     select.innerHTML = tracks.map(function (v) {
@@ -280,14 +324,17 @@ function renderAudioSelections(page, mediaSources) {
 
     if (tracks.length > 1) {
         select.removeAttribute('disabled');
+        hideAll(page, 'btnAudioTracks', true);
     } else {
         select.setAttribute('disabled', 'disabled');
+        hideAll(page, 'btnAudioTracks');
     }
 
     if (tracks.length) {
         page.querySelector('.selectAudioContainer').classList.remove('hide');
     } else {
         page.querySelector('.selectAudioContainer').classList.add('hide');
+        hideAll(page, 'btnAudioTracks');
     }
 }
 
@@ -299,6 +346,10 @@ function renderSubtitleSelections(page, mediaSources) {
     });
     tracks.sort(itemHelper.sortTracks);
     const select = page.querySelector('.selectSubtitles');
+    if (!select) {
+        hideAll(page, 'btnSubtitles', tracks.length > 0);
+        return;
+    }
     select.setLabel(globalize.translate('Subtitles'));
     const selectedId = mediaSource.DefaultSubtitleStreamIndex == null ? -1 : mediaSource.DefaultSubtitleStreamIndex;
 
@@ -316,8 +367,10 @@ function renderSubtitleSelections(page, mediaSources) {
 
     if (tracks.length) {
         page.querySelector('.selectSubtitlesContainer').classList.remove('hide');
+        hideAll(page, 'btnSubtitles', true);
     } else {
         page.querySelector('.selectSubtitlesContainer').classList.add('hide');
+        hideAll(page, 'btnSubtitles');
     }
 }
 
@@ -346,13 +399,33 @@ function reloadPlayButtons(page, item) {
         canPlay = true;
 
         const isResumable = item.UserData && item.UserData.PlaybackPositionTicks > 0;
-        hideAll(page, 'btnReplay', isResumable);
+        hideAll(page, 'btnReplay');
 
         for (const btnPlay of page.querySelectorAll('.btnPlay')) {
+            const playAction = isResumable ? 'resume' : 'play';
+            const playTitle = isResumable ? globalize.translate('ButtonResume') : globalize.translate('Play');
+
+            btnPlay.dataset.action = playAction;
+            btnPlay.title = playTitle;
+
             if (isResumable) {
-                btnPlay.title = globalize.translate('ButtonResume');
+                btnPlay.classList.add('is-resume');
+                btnPlay.classList.remove('is-play');
             } else {
-                btnPlay.title = globalize.translate('Play');
+                btnPlay.classList.add('is-play');
+                btnPlay.classList.remove('is-resume');
+            }
+
+            const btnPlayText = btnPlay.querySelector('.detailButton-text-primary');
+            if (btnPlayText) {
+                btnPlayText.textContent = playTitle;
+            }
+        }
+
+        for (const btnReplay of page.querySelectorAll('.btnReplay')) {
+            const btnReplayText = btnReplay.querySelector('.detailButton-text-primary');
+            if (btnReplayText) {
+                btnReplayText.textContent = globalize.translate('Play');
             }
         }
     } else {
@@ -549,6 +622,7 @@ function renderHeaderBackdrop(page, item, apiClient) {
 
 function reloadFromItem(instance, page, params, item, user) {
     const apiClient = ServerConnections.getApiClient(item.ServerId);
+    page.classList.toggle('isPersonDetailPage', item.Type === 'Person');
 
     libraryMenu.setTitle('');
 
@@ -701,6 +775,9 @@ function renderLogo(page, item, apiClient) {
 function showRecordingFields(instance, page, item, user) {
     if (!instance.currentRecordingFields) {
         const recordingFieldsElement = page.querySelector('.recordingFields');
+        if (!recordingFieldsElement) {
+            return;
+        }
 
         if (item.Type == 'Program' && user.Policy.EnableLiveTvManagement) {
             import('../../components/recordingcreator/recordingfields').then(({ default: RecordingFields }) => {
@@ -780,6 +857,9 @@ function setPeopleHeader(page, item) {
 
 function renderNextUp(page, item, user) {
     const section = page.querySelector('.nextUpSection');
+    if (!section) {
+        return;
+    }
 
     if (item.Type != 'Series') {
         section.classList.add('hide');
@@ -813,33 +893,59 @@ function renderNextUp(page, item, user) {
 }
 
 function setInitialCollapsibleState(page, item, apiClient, context, user) {
-    page.querySelector('.collectionItems').innerHTML = '';
+    const collectionItems = page.querySelector('.collectionItems');
+    if (collectionItems) {
+        collectionItems.innerHTML = '';
+    }
+
+    const listChildrenCollapsible = page.querySelector('#listChildrenCollapsible');
+    const childrenCollapsible = page.querySelector('#childrenCollapsible');
+    const primaryChildrenCollapsible = listChildrenCollapsible || childrenCollapsible;
 
     if (item.Type == 'Playlist') {
-        page.querySelector('#listChildrenCollapsible').classList.remove('hide');
-        page.querySelector('#childrenCollapsible').classList.add('hide');
+        if (primaryChildrenCollapsible) {
+            primaryChildrenCollapsible.classList.remove('hide');
+        }
+        if (childrenCollapsible && listChildrenCollapsible) {
+            childrenCollapsible.classList.add('hide');
+        }
         renderPlaylistItems(page, item);
     } else if (item.Type == 'Studio' || item.Type == 'Person' || item.Type == 'Genre' || item.Type == 'MusicGenre' || item.Type == 'MusicArtist') {
-        page.querySelector('#listChildrenCollapsible').classList.remove('hide');
-        page.querySelector('#childrenCollapsible').classList.add('hide');
+        if (primaryChildrenCollapsible) {
+            primaryChildrenCollapsible.classList.remove('hide');
+        }
+        if (childrenCollapsible && listChildrenCollapsible) {
+            childrenCollapsible.classList.add('hide');
+        }
         renderItemsByName(page, item);
     } else if (item.IsFolder) {
         if (item.Type == 'BoxSet') {
-            page.querySelector('#listChildrenCollapsible').classList.add('hide');
-            page.querySelector('#childrenCollapsible').classList.add('hide');
+            if (listChildrenCollapsible) {
+                listChildrenCollapsible.classList.add('hide');
+            }
+            if (childrenCollapsible) {
+                childrenCollapsible.classList.add('hide');
+            }
         }
 
         renderChildren(page, item);
     } else {
-        page.querySelector('#listChildrenCollapsible').classList.add('hide');
-        page.querySelector('#childrenCollapsible').classList.add('hide');
+        if (listChildrenCollapsible) {
+            listChildrenCollapsible.classList.add('hide');
+        }
+        if (childrenCollapsible) {
+            childrenCollapsible.classList.add('hide');
+        }
     }
 
     if (item.Type == 'Series') {
         renderSeriesSchedule(page, item);
         renderNextUp(page, item, user);
     } else {
-        page.querySelector('.nextUpSection').classList.add('hide');
+        const nextUpSection = page.querySelector('.nextUpSection');
+        if (nextUpSection) {
+            nextUpSection.classList.add('hide');
+        }
     }
 
     renderScenes(page, item);
@@ -1355,8 +1461,15 @@ function renderTags(page, item) {
 }
 
 function renderChildren(page, item) {
-    const childrenCollapsible = page.querySelector(LIST_VIEW_TYPES.includes(item.Type) ? '#listChildrenCollapsible' : '#childrenCollapsible');
+    const preferredCollapsibleSelector = LIST_VIEW_TYPES.includes(item.Type) ? '#listChildrenCollapsible' : '#childrenCollapsible';
+    const childrenCollapsible = page.querySelector(preferredCollapsibleSelector) || page.querySelector('#childrenCollapsible');
+    if (!childrenCollapsible) {
+        return;
+    }
     const childrenItemsContainer = childrenCollapsible.querySelector('.itemsContainer');
+    if (!childrenItemsContainer) {
+        return;
+    }
 
     let fields = 'ItemCounts,PrimaryImageAspectRatio,CanDelete,MediaSourceCount';
     const query = {
@@ -1542,6 +1655,27 @@ function renderChildren(page, item) {
 }
 
 function renderItemsByName(page, item) {
+    let childrenContent = page.querySelector('#childrenContent');
+
+    if (!childrenContent) {
+        const childrenCollapsible = page.querySelector('#childrenCollapsible');
+        const existingItemsContainer = childrenCollapsible?.querySelector('.itemsContainer');
+
+        if (existingItemsContainer) {
+            const wrapper = existingItemsContainer.parentElement;
+            if (wrapper) {
+                const replacement = document.createElement('div');
+                replacement.id = 'childrenContent';
+                wrapper.replaceWith(replacement);
+                childrenContent = replacement;
+            }
+        }
+    }
+
+    if (!childrenContent) {
+        return;
+    }
+
     import('../../scripts/itemsByName').then(({ default: ItemsByName }) => {
         ItemsByName.renderItems(page, item);
     });
@@ -1606,12 +1740,19 @@ function renderProgramsForChannel(page, result) {
         }) + '</div></div>';
     }
 
-    page.querySelector('.programGuide').innerHTML = html;
+    const programGuide = page.querySelector('.programGuide');
+    if (programGuide) {
+        programGuide.innerHTML = html;
+    }
 }
 
 function renderChannelGuide(page, apiClient, item) {
     if (item.Type === 'TvChannel') {
-        page.querySelector('.programGuideSection').classList.remove('hide');
+        const programGuideSection = page.querySelector('.programGuideSection');
+        if (!programGuideSection) {
+            return;
+        }
+        programGuideSection.classList.remove('hide');
         apiClient.getLiveTvPrograms({
             ChannelIds: item.Id,
             UserId: apiClient.getCurrentUserId(),
@@ -1701,8 +1842,13 @@ function canPlaySomeItemInCollection(items) {
 }
 
 function renderCollectionItems(page, parentItem, types, items) {
-    page.querySelector('.collectionItems').classList.remove('hide');
-    page.querySelector('.collectionItems').innerHTML = '';
+    const collectionItems = page.querySelector('.collectionItems');
+    if (!collectionItems) {
+        return;
+    }
+
+    collectionItems.classList.remove('hide');
+    collectionItems.innerHTML = '';
 
     if (!items.length) {
         renderCollectionItemType(page, parentItem, {
@@ -1775,6 +1921,9 @@ function renderCollectionItemType(page, parentItem, type, items) {
     html += '</div>';
     html += '</div>';
     const collectionItems = page.querySelector('.collectionItems');
+    if (!collectionItems) {
+        return;
+    }
     collectionItems.insertAdjacentHTML('beforeend', html);
     imageLoader.lazyChildren(collectionItems.lastChild);
 }
@@ -1953,12 +2102,16 @@ export default function (view, params) {
     }
 
     function getPlayOptions(startPosition) {
-        const audioStreamIndex = view.querySelector('.selectAudio').value || null;
+        const selectAudio = view.querySelector('.selectAudio');
+        const selectSource = view.querySelector('.selectSource');
+        const selectSubtitles = view.querySelector('.selectSubtitles');
+
+        const audioStreamIndex = selectAudio ? (selectAudio.value || null) : (self._selectedAudioStreamIndex ?? null);
         return {
             startPositionTicks: startPosition,
-            mediaSourceId: view.querySelector('.selectSource').value,
+            mediaSourceId: selectSource ? selectSource.value : self._selectedMediaSourceId,
             audioStreamIndex: audioStreamIndex,
-            subtitleStreamIndex: view.querySelector('.selectSubtitles').value
+            subtitleStreamIndex: selectSubtitles ? selectSubtitles.value : self._selectedSubtitleStreamIndex
         };
     }
 
@@ -2041,9 +2194,98 @@ export default function (view, params) {
         }]);
     }
 
+    function onAudioTracksClick(e) {
+        const mediaSources = self._currentPlaybackMediaSources;
+
+        if (!mediaSources?.length) {
+            return;
+        }
+
+        const mediaSource = getSelectedMediaSource(view, mediaSources);
+        const tracks = mediaSource.MediaStreams.filter(function (m) {
+            return m.Type === 'Audio';
+        });
+
+        if (tracks.length <= 1) {
+            return;
+        }
+
+        tracks.sort(itemHelper.sortTracks);
+        const select = view.querySelector('.selectAudio');
+        const currentValue = select ? parseInt(select.value || '-1', 10) : (self._selectedAudioStreamIndex ?? mediaSource.DefaultAudioStreamIndex ?? -1);
+        const menuItems = tracks.map(function (track) {
+            return {
+                name: track.DisplayTitle,
+                id: track.Index,
+                selected: track.Index === currentValue
+            };
+        });
+
+        import('../../components/actionSheet/actionSheet').then((actionsheet) => {
+            actionsheet.show({
+                items: menuItems,
+                positionTo: e.currentTarget
+            }).then(function (id) {
+                self._selectedAudioStreamIndex = parseInt(id, 10);
+                if (select) {
+                    select.value = id;
+                    select.dispatchEvent(new CustomEvent('change', { bubbles: true }));
+                }
+            }).catch(() => { /* no-op */ });
+        });
+    }
+
+    function onSubtitlesClick(e) {
+        const mediaSources = self._currentPlaybackMediaSources;
+
+        if (!mediaSources?.length) {
+            return;
+        }
+
+        const mediaSource = getSelectedMediaSource(view, mediaSources);
+        const tracks = mediaSource.MediaStreams.filter(function (m) {
+            return m.Type === 'Subtitle';
+        });
+
+        if (!tracks.length) {
+            return;
+        }
+
+        tracks.sort(itemHelper.sortTracks);
+        const select = view.querySelector('.selectSubtitles');
+        const currentValue = select ? parseInt(select.value || '-1', 10) : (self._selectedSubtitleStreamIndex ?? mediaSource.DefaultSubtitleStreamIndex ?? -1);
+        const menuItems = tracks.map(function (track) {
+            return {
+                name: track.DisplayTitle,
+                id: track.Index,
+                selected: track.Index === currentValue
+            };
+        });
+
+        menuItems.unshift({
+            id: -1,
+            name: globalize.translate('Off'),
+            selected: currentValue === -1
+        });
+
+        import('../../components/actionSheet/actionSheet').then((actionsheet) => {
+            actionsheet.show({
+                items: menuItems,
+                positionTo: e.currentTarget
+            }).then(function (id) {
+                self._selectedSubtitleStreamIndex = parseInt(id, 10);
+                if (select) {
+                    select.value = id;
+                    select.dispatchEvent(new CustomEvent('change', { bubbles: true }));
+                }
+            }).catch(() => { /* no-op */ });
+        });
+    }
+
     function onMoreCommandsClick() {
         const button = this;
-        let selectedItem = view.querySelector('.selectSource').value || currentItem.Id;
+        const selectSource = view.querySelector('.selectSource');
+        let selectedItem = (selectSource && selectSource.value) || currentItem.Id;
 
         const apiClient = getApiClient();
 
@@ -2107,17 +2349,26 @@ export default function (view, params) {
         bindAll(view, '.btnCancelSeriesTimer', 'click', onCancelSeriesTimerClick);
         bindAll(view, '.btnCancelTimer', 'click', onCancelTimerClick);
         bindAll(view, '.btnDownload', 'click', onDownloadClick);
-        view.querySelector('.trackSelections').addEventListener('submit', onTrackSelectionsSubmit);
+        bindAll(view, '.btnAudioTracks', 'click', onAudioTracksClick);
+        bindAll(view, '.btnSubtitles', 'click', onSubtitlesClick);
+        const trackSelections = view.querySelector('.trackSelections');
+        if (trackSelections) {
+            trackSelections.addEventListener('submit', onTrackSelectionsSubmit);
+        }
         view.querySelector('.btnSplitVersions').addEventListener('click', function () {
             splitVersions(self, view, apiClient, params);
         });
         bindAll(view, '.btnMoreCommands', 'click', onMoreCommandsClick);
-        view.querySelector('.selectSource').addEventListener('change', function () {
-            renderVideoSelections(view, self._currentPlaybackMediaSources);
-            renderAudioSelections(view, self._currentPlaybackMediaSources);
-            renderSubtitleSelections(view, self._currentPlaybackMediaSources);
-            updateMiscInfo();
-        });
+        const selectSource = view.querySelector('.selectSource');
+        if (selectSource) {
+            selectSource.addEventListener('change', function () {
+                renderVideoSelections(view, self._currentPlaybackMediaSources);
+                renderAudioSelections(view, self._currentPlaybackMediaSources);
+                renderSubtitleSelections(view, self._currentPlaybackMediaSources);
+                self._selectedMediaSourceId = selectSource.value;
+                updateMiscInfo();
+            });
+        }
         view.addEventListener('viewshow', function (e) {
             const page = this;
 
@@ -2152,6 +2403,9 @@ export default function (view, params) {
     }
 
     function updateMiscInfo() {
+        if (!self._currentPlaybackMediaSources?.length) {
+            return;
+        }
         const selectedMediaSource = getSelectedMediaSource(view, self._currentPlaybackMediaSources);
         renderMiscInfo(view, {
             // patch currentItem (primary item) with details from the selected MediaSource:

@@ -493,18 +493,21 @@
 }
 
 .detailLogo {
-    width: 25vw;
-    height: 16vh;
+    width: min(26vw, 35rem);
+    height: 14vh;
     position: absolute;
-    top: 10vh;
-    right: 25vw;
+    top: calc(env(safe-area-inset-top) + 10em);
+    left: 5%;
+    right: unset;
+    z-index: 3;
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: left center;
 
     [dir="rtl"] & {
-        left: 25vw;
-        right: unset;
+        left: unset;
+        right: 5%;
+        background-position: right center;
     }
 
     .layout-mobile &,
@@ -512,7 +515,7 @@
         display: none;
     }
 
-    @media all and (max-width: 68.75em) {
+    @media all and (max-width: 50em) {
         display: none;
     }
 }
@@ -544,6 +547,12 @@
 
 .itemLinks p {
     margin: 0.5em 0;
+}
+
+.itemTags,
+.itemTags .button-link,
+.itemTags a {
+    font-weight: 400;
 }
 
 .reviewLink,
@@ -582,7 +591,7 @@
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
-    height: 40vh;
+    height: 75vh;
     position: relative;
     animation: backdrop-fadein 800ms ease-in normal both;
 
@@ -642,6 +651,17 @@
     display: flex;
     align-items: center;
     margin: 1em 0;
+}
+
+.detailButtonsSecondary,
+.detailButtonsPrimary,
+.detailButtonsExtras {
+    display: flex;
+    align-items: center;
+}
+
+.detailButtonsExtras {
+    flex-wrap: wrap;
 }
 
 .itemName {
@@ -710,8 +730,7 @@
 
 .layout-mobile .parentName,
 .layout-mobile .itemName,
-.layout-mobile .itemMiscInfo,
-.layout-mobile .mainDetailButtons {
+.layout-mobile .itemMiscInfo {
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -720,12 +739,13 @@
 .layout-mobile .mainDetailButtons {
     margin-top: 1em;
     margin-bottom: 0.5em;
+    justify-content: flex-start;
+    text-align: left;
 }
 
 .layout-mobile [dir="ltr"] .mainDetailButtons {
     margin-left: 0;
-
-    @include header-poster-padding;
+    padding-left: 0;
 
     // The buttons row is full width on small screens
     @media all and (max-width: 32em) {
@@ -736,8 +756,7 @@
 
 .layout-mobile [dir="rtl"] .mainDetailButtons {
     margin-right: 0;
-
-    @include header-poster-padding-rtl;
+    padding-right: 0;
 
     @media all and (max-width: 32em) {
         margin-bottom: 0;
@@ -759,35 +778,197 @@
 }
 
 .detailRibbon {
-    display: flex;
-    align-items: center;
-    align-content: center;
+    position: relative;
+        
     z-index: 2;
 
-    .layout-mobile & {
-        display: block;
-        position: relative;
-        padding: 0.5rem 5%;
+    .layout-desktop & {
+        min-height: 25vh;
+        background-image: linear-gradient(180deg, transparent 0%, rgba(16,16,16,0.6) 60%, #101010 100%) !important;
+        
     }
 
-    .layout-desktop & {
-        position: relative;
-        margin-top: -7.2em;
-        height: 7.2em;
+    .layout-mobile & {
+        margin-top: -30vh;
+        min-height: 30vh;
     }
 
     .layout-tv & {
+        margin-top: 0;
+        min-height: auto;
+    }
+}
+.detailPagePrimaryContainer {
+    background: none !important;
+}
+.HeroBottomRow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: grid;
+    column-gap: 4.25rem;
+    row-gap: 0.75rem;
+    grid-template-columns: 22.5rem minmax(0, 2.2fr) minmax(10rem, 1fr);
+    grid-template-areas: "actions summary meta";
+    justify-content: left;
+    padding: 0 1.5rem 1.5rem 3.3%;
+}
+
+.HeroBottomRow-actions {
+    grid-area: actions;
+    width: 100%;
+    max-width: 22.5rem;
+    justify-self: start;
+}
+
+.HeroBottomRow-actions .mainDetailButtons {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.6rem;
+}
+
+.HeroBottomRow-actions .heroActionIconRow {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+.HeroBottomRow-actions .heroActionPrimaryRow {
+    width: 100%;
+}
+
+.HeroBottomRow-actions .heroActionSecondaryRow {
+    display: none;
+}
+
+.HeroBottomRow-actions .heroActionPrimaryRow .btnPlay {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 0.4em;
+    justify-content: flex-start;
+}
+
+.HeroBottomRow-actions .heroActionPrimaryRow .btnPlay {
+    background: rgba(255, 255, 255, 0.92);
+    color: #111;
+}
+
+.HeroBottomRow-actions .heroActionIconRow .detailButton {
+    width: 2.65rem;
+    height: 2.65rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    padding: 0 !important;
+}
+
+.HeroBottomRow-actions .btnPlayTrailer .detailButton-content,
+.HeroBottomRow-actions .btnPlaystate .detailButton-content,
+.HeroBottomRow-actions .btnUserRating .detailButton-content,
+.HeroBottomRow-actions .btnAudioTracks .detailButton-content,
+.HeroBottomRow-actions .btnSubtitles .detailButton-content,
+.HeroBottomRow-actions .btnMoreCommands .detailButton-content {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.HeroBottomRow-actions .heroActionPrimaryRow .btnPlay .detailButton-content {
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.55em;
+}
+
+.HeroBottomRow-actions .heroActionPrimaryRow .btnPlay .detailButton-text-primary {
+    display: inline;
+}
+
+.HeroBottomRow-summary {
+    grid-area: summary;
+    min-width: 0;
+    width: 100%;
+    max-width: 60rem;
+}
+
+.HeroBottomRow-meta {
+    grid-area: meta;
+    min-width: 0;
+    width: 100%;
+    max-width: 24rem;
+    justify-self: start;
+    text-align: left;
+}
+
+.HeroBottomRow-meta .itemLinks {
+    text-align: left;
+}
+
+.HeroBottomRow .itemDetailsGroup {
+    margin-top: 0;
+}
+
+.HeroBottomRow-summary .infoWrapper {
+    max-width: none;
+    margin-top: 0;
+}
+
+.HeroBottomRow-summary .overview.detail-clamp-text {
+    overflow: visible;
+    display: block;
+    -webkit-box-orient: initial;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+
+.HeroBottomRow-summary .overview-controls {
+    display: none;
+}
+
+@media all and (max-width: 80em) {
+    .HeroBottomRow {
+        grid-template-columns: 22.5rem minmax(0, 1fr);
+        grid-template-areas:
+            "actions summary"
+            "actions meta";
+        padding: 0 1rem 1rem;
+    }
+
+    .HeroBottomRow-meta {
+        max-width: 100%;
+    }
+}
+
+@media all and (max-width: 40em) {
+    .HeroBottomRow {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        grid-template-areas:
+            "actions actions"
+            "summary meta";
+        padding: 0 0.75rem 0.75rem;
+    }
+
+    .HeroBottomRow-meta {
+        max-width: none;
+    }
+
+    .HeroBottomRow-actions {
+        max-width: none;
+    }
+
+    .HeroBottomRow-summary .overview.detail-clamp-text {
+        overflow: visible;
         display: block;
-    }
-
-    .layout-desktop [dir="rtl"] &,
-    .layout-tv [dir="rtl"] & {
-        padding-right: 32.45vw;
-    }
-
-    .layout-desktop [dir="ltr"] &,
-    .layout-tv [dir="ltr"] & {
-        padding-left: 32.45vw;
+        -webkit-box-orient: initial;
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
     }
 }
 
@@ -795,6 +976,11 @@
     min-width: 0;
     max-width: 100%;
     flex: 1 0 0;
+
+    .layout-desktop & {
+        margin-top: 0.75em;
+        max-width: min(66vw, 64em);
+    }
 
     .layout-mobile & {
         @media all and (max-width: 32em) {
@@ -818,6 +1004,7 @@
 
 .detailPagePrimaryContainer {
     position: relative;
+
 }
 
 .detailPageSecondaryContainer {
@@ -895,16 +1082,28 @@
     }
 }
 
+.itemDetailPage .detailImageContainer {
+    display: none !important;
+}
+
+.itemDetailPage.isPersonDetailPage .detailImageContainer {
+    display: block !important;
+}
+
+.layout-desktop .itemDetailPage.isPersonDetailPage .detailImageContainer.hide-desktop {
+    display: block !important;
+}
+
 .detailPagePrimaryContent {
     position: relative;
     padding-top: 1.25em;
 
     [dir="ltr"] & {
-        padding-left: 32.45vw;
+        padding-left: 5%;
     }
 
     [dir="rtl"] & {
-        padding-right: 32.45vw;
+        padding-right: 5%;
     }
 
     .layout-mobile & {
@@ -960,7 +1159,7 @@ div.itemDetailGalleryLink.defaultCardBackground {
     }
 
     .layout-desktop .itemBackdrop {
-        height: 40vh;
+        height: 75vh;
     }
 
     .layout-desktop .detailPageWrapperContainer,
@@ -1073,10 +1272,25 @@ div.itemDetailGalleryLink.defaultCardBackground {
     align-items: center;
 }
 
+.detailButton-content-primary {
+    flex-direction: row;
+    gap: 0.55em;
+}
+
+.detailButton-text-primary {
+    margin-top: 0;
+    font-size: 1em;
+    font-weight: 600;
+}
+
 .detailButton-icon {
     font-size: 1.6em !important;
     width: 1em;
     height: 1em;
+}
+
+.detailButton-icon-svg {
+    display: block;
 }
 
 .detailImageProgressContainer {
@@ -1086,9 +1300,10 @@ div.itemDetailGalleryLink.defaultCardBackground {
 }
 
 .detailButton-text {
-    margin-top: 0.7em;
     font-size: 80%;
     font-weight: 400;
+    font-size: 1.5em;
+    font-weight: 700;
 }
 
 @media all and (max-width: 62.5em) {
@@ -1111,6 +1326,44 @@ div.itemDetailGalleryLink.defaultCardBackground {
         font-size: 108%;
         margin: 1em 0 1.25em;
     }
+}
+
+.layout-desktop .mainDetailButtons {
+    margin-top: auto;
+    margin-bottom: 1.25em;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65em;
+}
+
+.layout-desktop .detailButtonsSecondary {
+    gap: 0.55em;
+}
+
+.layout-desktop .detailButtonsSecondary .detailButton {
+    width: 2.7em;
+    height: 2.7em;
+    padding: 0 !important;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(0.1em);
+}
+
+.layout-desktop .detailButtonsPrimary .detailButton {
+    min-width: 12.25em;
+    min-height: 2.9em;
+    border-radius: 0.4em;
+    padding: 0 1.35em !important;
+    background: rgba(255, 255, 255, 0.92);
+    color: #111;
+}
+
+.layout-desktop .detailButtonsPrimary .detailButton .detailButton-icon {
+    font-size: 1.75em !important;
+}
+
+.layout-desktop .detailButtonsExtras {
+    display: none;
 }
 
 @media all and (max-width: 50em) {
@@ -1423,6 +1676,10 @@ div:not(.sectionTitleContainer-cards) > .sectionTitle-cards {
     margin-top: 1.5em;
 }
 
+.layout-desktop .HeroBottomRow .itemDetailsGroup {
+    margin-top: 0;
+}
+
 .trackSelections {
     max-width: 44em;
 }
@@ -1480,6 +1737,8 @@ div:not(.sectionTitleContainer-cards) > .sectionTitle-cards {
     display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 12;
+    color: #f4f4f4;
+    font-size: 1.5em;
 }
 
 @media all and (min-width: 40em) {

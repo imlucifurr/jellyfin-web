@@ -69,6 +69,9 @@ function renderItems(page, item) {
     }
 
     const elem = page.querySelector('#childrenContent');
+    if (!elem) {
+        return;
+    }
     elem.innerHTML = sections.map(function (section) {
         let html = '';
         let sectionClass = 'verticalSection';
@@ -293,6 +296,9 @@ function loadItems(element, item, type, query, listOptions) {
             itemsContainer.classList.remove('vertical-wrap');
             itemsContainer.classList.add('vertical-list');
         } else {
+            if (listOptions.coverImage == null) {
+                listOptions.coverImage = true;
+            }
             html = cardBuilder.getCardsHtml(listOptions);
             itemsContainer.classList.add('vertical-wrap');
             itemsContainer.classList.remove('vertical-list');
@@ -355,7 +361,7 @@ function getQuery(options, item) {
         SortOrder: 'Ascending',
         IncludeItemTypes: '',
         Recursive: true,
-        Fields: 'ParentId,PrimaryImageAspectRatio',
+        Fields: 'ParentId,PrimaryImageAspectRatio,ImageTags,PrimaryImageTag,BackdropImageTags,ThumbImageTag',
         Limit: 100,
         StartIndex: 0,
         CollapseBoxSetItems: false
